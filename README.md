@@ -39,17 +39,61 @@ This project focuses on **clean architecture, scalability, and real-world backen
 
 ---
 
-## 📂 Project Structure
+## 📂 Project Structure (Step-by-Step)
 
-```
+> Instead of dumping everything, modules are introduced gradually 👇
+
+### ✅ Step 1: Core Setup
+
+```bash
 src/
-│
-├── auth/          # Authentication module
-├── users/         # User management
-├── courses/       # Course module
-├── enrollments/   # Enrollment logic
-├── common/        # Shared utilities
-└── prisma/        # Database service
+├── auth/          # Authentication (login/register)
+└── prisma/        # Database connection & Prisma service
+```
+
+---
+
+### 🔜 Step 2: User Management
+
+```bash
+src/
+├── users/         # Roles: Admin, Instructor, Student
+```
+
+---
+
+### 🔜 Step 3: Course System
+
+```bash
+src/
+├── courses/       # Course creation & structure
+```
+
+---
+
+### 🔜 Step 4: Enrollment
+
+```bash
+src/
+├── enrollments/   # Student enrollments
+```
+
+---
+
+### 🔜 Step 5: Learning Content
+
+```bash
+src/
+├── lectures/      # Videos, PDFs, resources
+```
+
+---
+
+### 🔜 Step 6: Progress Tracking
+
+```bash
+src/
+├── progress/      # Track course completion
 ```
 
 ---
@@ -78,7 +122,7 @@ pnpm run start:prod
 
 Create a `.env` file:
 
-```
+```env
 DATABASE_URL=your_database_url
 JWT_SECRET=your_secret_key
 ```
@@ -99,7 +143,7 @@ JWT_SECRET=your_secret_key
 
 * Build a **production-ready LMS backend**
 * Practice **system design & modular architecture**
-* Showcase **real-world backend skills** for hiring
+* Showcase **real-world backend skills for hiring**
 
 ---
 
