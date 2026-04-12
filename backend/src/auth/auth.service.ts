@@ -2,17 +2,23 @@ import { ConflictException, Injectable, Logger, UnauthorizedException } from '@n
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import { UserService } from 'src/user/user.service';
+import { LoginAuthDto } from './dto/login-auth.dto';
+import bcrypt from 'bcrypt'
+import { JwtService } from '@nestjs/jwt'
 
 @Injectable()
 export class AuthService {
-   private readonly logger = new Logger(AuthService.name);
-  constructor(private readonly userService: UserService) { }
+  private readonly logger = new Logger(AuthService.name);
+  constructor(
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService
+  ) { }
   async create(createAuthDto: CreateAuthDto) {
     const { email, name, password, role } = createAuthDto;
 
     const existingUser = await this.userService.getUserByEmail(email);
 
-    if(existingUser){
+    if (existingUser) {
       throw new ConflictException("Email already taken");
     }
 
@@ -25,12 +31,56 @@ export class AuthService {
     };
   }
 
+  async login(loginAuthDto: LoginAuthDto) {
+    /**
+     * 1. check valid email and password
+     * 2. check email is valid and exist
+     * 3. 
+     */
+    const { email, password } = loginAuthDto;
+
+    const user = await this.userService.getUserByEmail(email);
+
+    if (!user) {
+      throw new UnauthorizedException('Invalid email or password.');
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid email or password.');
+    }
+
+    const payload = {
+      sub: user?.id,
+      role: user?.role
+    }
+
+    const accessToken = await this.jwtService.signAsync(payload);
+
+    // create a refresh token (Longer expiry than access token)
+    const refreshToken = await this.jwtService.signAsync(payload, {
+      expiresIn: '7d',
+    });
+
+    const { password: _password, ...userWithoutPassword } = user;
+
+    return {
+      message: 'User authenticated successfully.',
+      data: {
+        user: userWithoutPassword,
+        accessToken,
+        refreshToken,
+      },
+    };
+  }
+
   findAll() {
-    return `This action returns all auth`;
+    return this.userService.getAllUsers();
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} auth`;
+    return this.userService.getuserById(id)
   }
 
   update(id: number, updateAuthDto: UpdateAuthDto) {

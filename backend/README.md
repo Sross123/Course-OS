@@ -101,6 +101,19 @@ backend/
 pnpm start:dev
 ```
 
+### Swagger API Documentation
+After starting the server, open:
+
+```bash
+http://localhost:3000/api
+```
+
+Use the **Authorize** button in Swagger UI and provide your JWT access token as:
+
+```text
+Bearer <your-access-token>
+```
+
 ### Production
 ```bash
 pnpm build
