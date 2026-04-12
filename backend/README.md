@@ -1,18 +1,18 @@
 # Course-OS Backend
 
-A NestJS-based backend API for the Course-OS platform, providing user authentication and management functionality.
+A NestJS backend API for the Course-OS platform, providing user registration, authentication, and basic user management.
 
 ## Overview
 
-This backend serves as the API layer for Course-OS, a course management system. It handles user registration, authentication, and user management with role-based access control.
+This backend implements the API layer for Course-OS, a course management system. It supports user registration, login, JWT authentication, and user listing.
 
 ## Features
 
-- **User Authentication & Registration**: Secure user registration with email validation and password hashing
-- **Role-Based Access Control**: Support for STUDENT, INSTRUCTOR, and ADMIN roles
-- **Database Integration**: PostgreSQL database with Prisma ORM
-- **Input Validation**: Global validation pipes using class-validator
-- **Structured Logging**: JSON-formatted console logging
+- **User Authentication & Registration**: Secure signup with email validation and password hashing
+- **JWT Authentication**: Access tokens for protected routes
+- **Role-aware User Model**: Support for STUDENT, INSTRUCTOR, and ADMIN roles
+- **Database Integration**: PostgreSQL with Prisma ORM
+- **Input Validation**: DTO validation using class-validator
 - **TypeScript**: Full TypeScript support for type safety
 
 ## Tech Stack
@@ -20,7 +20,7 @@ This backend serves as the API layer for Course-OS, a course management system. 
 - **Framework**: NestJS
 - **Database**: PostgreSQL
 - **ORM**: Prisma
-- **Authentication**: bcrypt for password hashing
+- **Authentication**: bcrypt and JWT
 - **Validation**: class-validator & class-transformer
 - **Language**: TypeScript
 
@@ -33,20 +33,28 @@ backend/
 │   └── migrations/            # Database migration files
 ├── src/
 │   ├── auth/                  # Authentication module
-│   │   ├── auth.controller.ts # Auth endpoints
-│   │   ├── auth.service.ts    # Auth business logic
-│   │   ├── auth.module.ts     # Auth module configuration
-│   │   ├── dto/               # Data transfer objects
-│   │   └── entities/          # Auth entities
+│   │   ├── auth.controller.ts
+│   │   ├── auth.module.ts
+│   │   ├── auth.service.ts
+│   │   ├── auth.guard.ts
+│   │   ├── dto/
+│   │   │   ├── create-auth.dto.ts
+│   │   │   ├── login-auth.dto.ts
+│   │   │   └── update-auth.dto.ts
 │   ├── user/                  # User management module
-│   │   ├── user.service.ts    # User service
-│   │   └── user.module.ts     # User module
-│   ├── prisma/                # Prisma database service
-│   ├── generated/             # Auto-generated Prisma client
-│   ├── app.module.ts          # Main application module
-│   ├── app.controller.ts      # Root controller
-│   ├── app.service.ts         # Root service
-│   └── main.ts                # Application bootstrap
+│   │   ├── user.module.ts
+│   │   └── user.service.ts
+│   ├── prisma/                # Prisma database integration
+│   │   ├── prisma.module.ts
+│   │   └── prisma.service.ts
+│   ├── generated/             # Generated Prisma client
+│   ├── types/                 # Shared type definitions
+│   │   ├── global.type.d.ts
+│   │   └── global.type.ts
+│   ├── app.controller.ts
+│   ├── app.module.ts
+│   ├── app.service.ts
+│   └── main.ts
 ├── test/                      # End-to-end tests
 ├── package.json               # Dependencies and scripts
 └── tsconfig.json              # TypeScript configuration
@@ -68,7 +76,14 @@ backend/
 ### Authentication
 - `POST /auth/register` - Register a new user
   - Body: `{ name, email, password, role }`
-  - Returns: User data (excluding password)
+  - Returns: Registered user data (password excluded)
+
+- `POST /auth/login` - Authenticate an existing user
+  - Body: `{ email, password }`
+  - Returns: JWT access token and refresh token
+
+- `GET /auth` - Fetch all users (protected)
+  - Requires a valid JWT in `Authorization: Bearer <token>` header
 
 ## Installation
 
@@ -87,10 +102,7 @@ backend/
 
 3. **Database Setup:**
    ```bash
-   # Generate Prisma client
    pnpm prisma generate
-
-   # Run database migrations
    pnpm prisma migrate dev
    ```
 
@@ -108,7 +120,7 @@ After starting the server, open:
 http://localhost:3000/api
 ```
 
-Use the **Authorize** button in Swagger UI and provide your JWT access token as:
+Use the **Authorize** button in Swagger UI with:
 
 ```text
 Bearer <your-access-token>
@@ -122,13 +134,8 @@ pnpm start:prod
 
 ### Testing
 ```bash
-# Unit tests
 pnpm test
-
-# E2E tests
 pnpm test:e2e
-
-# Test coverage
 pnpm test:cov
 ```
 
@@ -138,7 +145,8 @@ pnpm test:cov
 - `format`: Format code with Prettier
 - `start`: Start production server
 - `start:dev`: Start development server with hot reload
-- `start:debug`: Start with debug mode
+- `dev`: Alias for `start:dev`
+- `start:debug`: Start application in debug mode
 - `lint`: Run ESLint
 - `test`: Run unit tests
 - `test:watch`: Run tests in watch mode
@@ -147,32 +155,28 @@ pnpm test:cov
 ## Development Progress
 
 ### Completed Features
-- ✅ Project setup with NestJS
+- ✅ NestJS backend setup
 - ✅ Prisma integration with PostgreSQL
 - ✅ User model with roles
-- ✅ User registration endpoint
+- ✅ User registration and login endpoints
 - ✅ Password hashing with bcrypt
 - ✅ Email uniqueness validation
-- ✅ Global validation pipes
-- ✅ Structured logging
+- ✅ DTO validation with class-validator
+- ✅ JWT authentication guard
 - ✅ Database migrations
-- ✅ Basic project structure
 
 ### In Progress / Planned
-- 🔄 User login/authentication
-- 🔄 JWT token implementation
-- 🔄 Role-based middleware
+- 🔄 Role-based access guard
 - 🔄 Course management endpoints
 - 🔄 User profile management
-- 🔄 API documentation (Swagger)
-- 🔄 Error handling middleware
+- 🔄 Enhanced error handling
 - 🔄 Input sanitization
 - 🔄 Rate limiting
 - 🔄 Database seeding
 
 ## Contributing
 
-1. Follow the existing code style
+1. Follow existing code style
 2. Run tests before committing
 3. Update documentation for new features
 4. Use conventional commit messages
