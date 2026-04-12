@@ -52,8 +52,20 @@ export class UserService {
         })
     }
 
-    async getuserById(id: number){
-        
+    async getuserById(id: string){
+        return this.prisma.user.findFirst({
+            where:{
+                id
+            },
+            select:{
+                id: true,
+                email: true,
+                name: true,
+                role: true,
+                createdAt: true,
+                updatedAt: true
+            }
+        })
     }
 
 }

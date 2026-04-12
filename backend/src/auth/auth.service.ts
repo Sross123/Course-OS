@@ -79,15 +79,15 @@ export class AuthService {
     return this.userService.getAllUsers();
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return this.userService.getuserById(id)
   }
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
+  update(id: string, updateAuthDto: UpdateAuthDto) {
     return `This action updates a #${id} auth`;
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return `This action removes a #${id} auth`;
   }
 }
