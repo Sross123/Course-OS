@@ -8,9 +8,9 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client"
-  output          = "../src/generated/prisma"
-  moduleFormat  = "cjs"
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
 }
 
 enum Role {
@@ -19,12 +19,13 @@ enum Role {
   ADMIN
 }
 
-
 model User {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  password  String
-  role      Role     @default(STUDENT)
+  id       String @id @default(uuid())
+  name     String
+  email    String @unique
+  password String
+  role     Role   @default(STUDENT)
+
   createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }

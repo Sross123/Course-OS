@@ -24,11 +24,19 @@ export class UserService {
                 email,
                 name,
                 password: hashPassword,
-                role
+                role,
+            },
+            select: {
+                id: true,
+                email: true,
+                name: true,
+                role: true,
+                createdAt: true,
+                updatedAt: true
+
             }
         })
-        const { password: _, ...safeUser } = user;
-        return safeUser;
+        return user;
     }
 
 }
