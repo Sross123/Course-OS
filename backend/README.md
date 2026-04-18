@@ -15,6 +15,7 @@ This backend implements the API layer for Course-OS, a course management system.
 - **Input Validation**: DTO validation using class-validator
 - **TypeScript**: Full TypeScript support for type safety
 - **Swagger Documentation**: Organized with reusable decorators for clean, maintainable API docs
+- **Global Exception Handling**: Centralized error responses with consistent format and logging
 
 ## Tech Stack
 
@@ -35,6 +36,10 @@ backend/
 ├── src/
 │   ├── config/                # Configuration files
 │   │   └── swagger.config.ts  # Swagger/OpenAPI setup
+│   ├── common/                # Shared utilities and filters
+│   │   └── filters/
+│   │       ├── index.ts
+│   │       └── global-exception.filter.ts
 │   ├── auth/                  # Authentication module
 │   │   ├── auth.controller.ts # Main controller (clean & minimal)
 │   │   ├── auth.module.ts
@@ -104,6 +109,28 @@ async function bootstrap() {
   await app.listen(process.env.PORT ?? 3000);
 }
 ```
+
+### Global Exception Handling
+
+All exceptions are caught and handled by `GlobalExceptionFilter` (in `src/common/filters/`) which provides consistent error responses:
+
+**Error Response Format:**
+```json
+{
+  "success": false,
+  "statusCode": 400,
+  "message": "Email already taken.",
+  "timestamp": "2026-04-19T10:30:00.000Z",
+  "path": "/auth/register"
+}
+```
+
+**Features:**
+- ✅ Catches both `HttpException` and unknown exceptions
+- ✅ Consistent JSON response format
+- ✅ Automatic logging of errors
+- ✅ Includes request path and timestamp
+- ✅ Applied globally in `main.ts`
 
 ### Swagger Documentation Pattern
 
@@ -229,11 +256,11 @@ pnpm test:cov
 - ✅ Role-based access guard
 - ✅ Swagger documentation with reusable decorators
 - ✅ Auth controller refactored for production-ready code
+- ✅ Global exception filter with centralized error handling
 
 ### In Progress / Planned
 - 🔄 Course management endpoints
 - 🔄 User profile management
-- 🔄 Enhanced error handling
 - 🔄 Input sanitization
 - 🔄 Rate limiting
 - 🔄 Database seeding
