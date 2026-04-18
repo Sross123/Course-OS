@@ -7,8 +7,6 @@ import {
   Param,
   Delete,
   UseGuards,
-  HttpCode,
-  ParseIntPipe,
 } from '@nestjs/common';
 
 import { AuthService } from './auth.service';
@@ -20,71 +18,51 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RolesGuard } from './guards/roles.guard';
 import { Roles } from './decorators/roles.decorator';
 
+import { ApiTags } from '@nestjs/swagger';
 import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiOperation,
-  ApiParam,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+  RegisterSwagger,
+  LoginSwagger,
+  GetUsersSwagger,
+  GetUserSwagger,
+  UpdateUserSwagger,
+  DeleteUserSwagger,
+} from './swagger/decorators';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  // ✅ REGISTER
   @Post('register')
-  @ApiOperation({ summary: 'Register a new user account' })
-  @ApiBody({ type: CreateAuthDto })
-  @ApiResponse({ status: 201, description: 'User registered successfully.' })
-  @ApiResponse({ status: 409, description: 'Email already taken.' })
+  @RegisterSwagger()
   register(@Body() dto: CreateAuthDto) {
     return this.authService.create(dto);
   }
 
-  // ✅ LOGIN
   @Post('login')
-  @HttpCode(200)
-  @ApiOperation({ summary: 'Login with email and password' })
-  @ApiBody({ type: LoginAuthDto })
-  @ApiResponse({ status: 200, description: 'User authenticated successfully.' })
-  @ApiResponse({ status: 401, description: 'Invalid email or password.' })
+  @LoginSwagger()
   login(@Body() dto: LoginAuthDto) {
     return this.authService.login(dto);
   }
 
-  // ✅ GET ALL USERS (ADMIN ONLY)
   @Get()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN')
-  @ApiBearerAuth('JWT-auth')
-  @ApiOperation({ summary: 'Get all users (ADMIN only)' })
-  @ApiResponse({ status: 200, description: 'Users fetched successfully.' })
-  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @GetUsersSwagger()
   findAll() {
     return this.authService.findAll();
   }
 
-  // ✅ GET ONE USER
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('JWT-auth')
-  @ApiOperation({ summary: 'Get user by ID' })
-  @ApiResponse({ status: 200, description: 'User fetched successfully.' })
-  @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  @ApiParam({ name: 'id' })
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  @GetUserSwagger()
   findOne(@Param('id') id: string) {
     return this.authService.findOne(id);
   }
 
-  // ✅ UPDATE USER
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
-  @ApiOperation({ summary: 'Update user by ID' })
-  @ApiParam({ name: 'id', example: 'uuid-value' })
-  @ApiBody({ type: UpdateAuthDto })
+  @UpdateUserSwagger()
   update(
     @Param('id') id: string,
     @Body() dto: UpdateAuthDto,
@@ -92,12 +70,10 @@ export class AuthController {
     return this.authService.update(id, dto);
   }
 
-  // ✅ DELETE USER
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN')
-  @ApiOperation({ summary: 'Delete user (ADMIN only)' })
-  @ApiParam({ name: 'id', example: 'uuid-value' })
+  @DeleteUserSwagger()
   remove(@Param('id') id: string) {
     return this.authService.remove(id);
   }

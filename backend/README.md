@@ -14,6 +14,7 @@ This backend implements the API layer for Course-OS, a course management system.
 - **Database Integration**: PostgreSQL with Prisma ORM
 - **Input Validation**: DTO validation using class-validator
 - **TypeScript**: Full TypeScript support for type safety
+- **Swagger Documentation**: Organized with reusable decorators for clean, maintainable API docs
 
 ## Tech Stack
 
@@ -33,14 +34,28 @@ backend/
 │   └── migrations/            # Database migration files
 ├── src/
 │   ├── auth/                  # Authentication module
-│   │   ├── auth.controller.ts
+│   │   ├── auth.controller.ts # Main controller (clean & minimal)
 │   │   ├── auth.module.ts
 │   │   ├── auth.service.ts
-│   │   ├── auth.guard.ts
+│   │   ├── constant.ts
+│   │   ├── decorators/
+│   │   │   └── roles.decorator.ts
 │   │   ├── dto/
 │   │   │   ├── create-auth.dto.ts
 │   │   │   ├── login-auth.dto.ts
 │   │   │   └── update-auth.dto.ts
+│   │   ├── guards/
+│   │   │   ├── jwt-auth.guard.ts
+│   │   │   └── roles.guard.ts
+│   │   └── swagger/           # Swagger documentation
+│   │       └── decorators/    # Reusable Swagger decorators
+│   │           ├── index.ts
+│   │           ├── register-swagger.decorator.ts
+│   │           ├── login-swagger.decorator.ts
+│   │           ├── get-users-swagger.decorator.ts
+│   │           ├── get-user-swagger.decorator.ts
+│   │           ├── update-user-swagger.decorator.ts
+│   │           └── delete-user-swagger.decorator.ts
 │   ├── user/                  # User management module
 │   │   ├── user.module.ts
 │   │   └── user.service.ts
@@ -49,8 +64,7 @@ backend/
 │   │   └── prisma.service.ts
 │   ├── generated/             # Generated Prisma client
 │   ├── types/                 # Shared type definitions
-│   │   ├── global.type.d.ts
-│   │   └── global.type.ts
+│   │   └── global.type.ts     # Enums and types (Roles)
 │   ├── app.controller.ts
 │   ├── app.module.ts
 │   ├── app.service.ts
@@ -70,6 +84,35 @@ backend/
 - `role`: User role (STUDENT, INSTRUCTOR, ADMIN)
 - `createdAt`: Creation timestamp
 - `updatedAt`: Last update timestamp
+
+## Architecture & Code Quality
+
+### Swagger Documentation Pattern
+
+We use a **decorator-based pattern** to keep controllers clean and Swagger docs maintainable:
+
+```typescript
+// ✅ Clean controller
+@Post('register')
+@RegisterSwagger()
+register(@Body() dto: CreateAuthDto) {
+  return this.authService.create(dto);
+}
+```
+
+All Swagger decorators are defined in `src/auth/swagger/decorators/` using `applyDecorators()` for reusability:
+- `@RegisterSwagger()` - Register endpoint documentation
+- `@LoginSwagger()` - Login endpoint documentation
+- `@GetUsersSwagger()` - Get all users documentation
+- `@GetUserSwagger()` - Get single user documentation
+- `@UpdateUserSwagger()` - Update user documentation
+- `@DeleteUserSwagger()` - Delete user documentation
+
+**Benefits:**
+- Controllers remain readable and focused on business logic
+- Swagger documentation is centralized and easy to maintain
+- Decorators are reusable across modules
+- No decorator clutter in controller methods
 
 ## API Endpoints
 
@@ -114,6 +157,7 @@ pnpm start:dev
 ```
 
 ### Swagger API Documentation
+
 After starting the server, open:
 
 ```bash
@@ -164,15 +208,18 @@ pnpm test:cov
 - ✅ DTO validation with class-validator
 - ✅ JWT authentication guard
 - ✅ Database migrations
+- ✅ Role-based access guard
+- ✅ Swagger documentation with reusable decorators
+- ✅ Auth controller refactored for production-ready code
 
 ### In Progress / Planned
-- 🔄 Role-based access guard
 - 🔄 Course management endpoints
 - 🔄 User profile management
 - 🔄 Enhanced error handling
 - 🔄 Input sanitization
 - 🔄 Rate limiting
 - 🔄 Database seeding
+- 🔄 User module Swagger decorators
 
 ## Contributing
 

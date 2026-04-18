@@ -6,7 +6,6 @@ export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    console.log(context, "context")
     // 🔥 handler + class dono check karega
     const requiredRoles = this.reflector.getAllAndOverride<string[]>(
       'roles',
@@ -16,7 +15,6 @@ export class RolesGuard implements CanActivate {
       ],
     );
 
-    console.log("requiredRoles", requiredRoles)
 
     if (!requiredRoles) return true;
 
