@@ -5,13 +5,19 @@ import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
-  imports: [ConfigModule.forRoot({
+  imports: [ThrottlerModule.forRoot({
+    throttlers: [{
+      ttl: 60,   // seconds
+      limit: 5,  // max requests
+    }]
+  }), ConfigModule.forRoot({
     isGlobal: true,
     envFilePath: '.env',
   }), PrismaModule, AuthModule, UserModule],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
