@@ -33,6 +33,8 @@ backend/
 │   ├── schema.prisma          # Database schema definition
 │   └── migrations/            # Database migration files
 ├── src/
+│   ├── config/                # Configuration files
+│   │   └── swagger.config.ts  # Swagger/OpenAPI setup
 │   ├── auth/                  # Authentication module
 │   │   ├── auth.controller.ts # Main controller (clean & minimal)
 │   │   ├── auth.module.ts
@@ -86,6 +88,22 @@ backend/
 - `updatedAt`: Last update timestamp
 
 ## Architecture & Code Quality
+
+### Centralized Swagger Configuration
+
+All Swagger/OpenAPI configuration is centralized in `src/config/swagger.config.ts`. The `setupSwagger()` function is called from `main.ts` to keep the entry point clean:
+
+```typescript
+// main.ts
+import { setupSwagger } from './config/swagger.config';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  app.useGlobalPipes(new ValidationPipe());
+  setupSwagger(app);  // ✅ One line setup
+  await app.listen(process.env.PORT ?? 3000);
+}
+```
 
 ### Swagger Documentation Pattern
 
