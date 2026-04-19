@@ -27,11 +27,14 @@ import {
   UpdateUserSwagger,
   DeleteUserSwagger,
 } from './swagger/decorators';
+import { IRoles } from './constant';
+
+const { ADMIN, INSTRUCTOR, STUDENT } = IRoles
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Post('register')
   @RegisterSwagger()
@@ -47,7 +50,7 @@ export class AuthController {
 
   @Get()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('ADMIN')
+  @Roles(ADMIN, INSTRUCTOR)
   @GetUsersSwagger()
   findAll() {
     return this.authService.findAll();
@@ -72,7 +75,7 @@ export class AuthController {
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('ADMIN')
+  @Roles(ADMIN)
   @DeleteUserSwagger()
   remove(@Param('id') id: string) {
     return this.authService.remove(id);
