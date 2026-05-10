@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ConsoleLogger, ValidationPipe } from '@nestjs/common';
 import { setupSwagger } from './config/swagger.config';
 import { GlobalExceptionFilter } from './common/filters';
+import helmet from 'helmet'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -11,6 +12,8 @@ async function bootstrap() {
       colors: true
     }),
   });
+
+  app.use(helmet())
 
   // Global Exception Filter - catches all exceptions
   app.useGlobalFilters(new GlobalExceptionFilter());
