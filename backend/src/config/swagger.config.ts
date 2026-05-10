@@ -7,7 +7,10 @@ export function setupSwagger(app: INestApplication): void {
     .setTitle(appConstants.api.title)
     .setDescription(appConstants.api.description)
     .setVersion(appConstants.api.version)
-    .addTag(appConstants.swagger.tags[0].name, appConstants.swagger.tags[0].description)
+    .addTag(
+      appConstants.swagger.tags[0].name,
+      appConstants.swagger.tags[0].description,
+    )
     .addBearerAuth(
       {
         type: appConstants.swagger.bearerAuth.type as 'http',

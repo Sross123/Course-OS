@@ -41,7 +41,8 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       // Extract message from different response formats
       if (typeof exceptionResponse === 'object' && exceptionResponse !== null) {
         const objResponse = exceptionResponse as any;
-        message = objResponse.message || exception.message || 'An error occurred';
+        message =
+          objResponse.message || exception.message || 'An error occurred';
       } else {
         message = exception.message || 'An error occurred';
       }
@@ -49,10 +50,13 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       // Handle unknown exceptions
       status = HttpStatus.INTERNAL_SERVER_ERROR;
       message = 'Internal server error';
-      
+
       // Log the actual error for debugging
       if (exception instanceof Error) {
-        this.logger.error(`Unhandled Exception: ${exception.message}`, exception.stack);
+        this.logger.error(
+          `Unhandled Exception: ${exception.message}`,
+          exception.stack,
+        );
       } else {
         this.logger.error('Unhandled Exception:', exception);
       }
@@ -68,7 +72,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
     // Log the error
     this.logger.warn(
-      `${request.method} ${request.url} - ${status} - ${message}`
+      `${request.method} ${request.url} - ${status} - ${message}`,
     );
 
     response.status(status).json(errorResponse);

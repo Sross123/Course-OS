@@ -27,14 +27,14 @@ import {
   UpdateUserSwagger,
   DeleteUserSwagger,
 } from './swagger/decorators';
-import { IRoles } from './constant';
+import { IRoles } from 'src/constants';
 
-const { ADMIN, INSTRUCTOR, STUDENT } = IRoles
+const { ADMIN, INSTRUCTOR, STUDENT } = IRoles;
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) { }
+  constructor(private readonly authService: AuthService) {}
 
   @Post('register')
   @RegisterSwagger()
@@ -66,10 +66,7 @@ export class AuthController {
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
   @UpdateUserSwagger()
-  update(
-    @Param('id') id: string,
-    @Body() dto: UpdateAuthDto,
-  ) {
+  update(@Param('id') id: string, @Body() dto: UpdateAuthDto) {
     return this.authService.update(id, dto);
   }
 

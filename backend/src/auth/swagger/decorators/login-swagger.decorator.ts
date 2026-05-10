@@ -1,9 +1,5 @@
 import { applyDecorators, HttpCode } from '@nestjs/common';
-import {
-  ApiOperation,
-  ApiBody,
-  ApiResponse,
-} from '@nestjs/swagger';
+import { ApiOperation, ApiBody, ApiResponse } from '@nestjs/swagger';
 import { LoginAuthDto } from '../../dto/login-auth.dto';
 
 export function LoginSwagger() {
