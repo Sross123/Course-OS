@@ -36,6 +36,13 @@ backend/
 ├── src/
 │   ├── config/                # Configuration files
 │   │   └── swagger.config.ts  # Swagger/OpenAPI setup
+│   ├── constants/             # Centralized constants & configuration
+│   │   ├── index.ts           # Central export point
+│   │   ├── roles.constants.ts
+│   │   ├── security.constants.ts
+│   │   ├── app.constants.ts
+│   │   ├── throttler.constants.ts
+│   │   └── validation.constants.ts
 │   ├── common/                # Shared utilities and filters
 │   │   └── filters/
 │   │       ├── index.ts
@@ -44,7 +51,6 @@ backend/
 │   │   ├── auth.controller.ts # Main controller (clean & minimal)
 │   │   ├── auth.module.ts
 │   │   ├── auth.service.ts
-│   │   ├── constant.ts
 │   │   ├── decorators/
 │   │   │   └── roles.decorator.ts
 │   │   ├── dto/
@@ -70,8 +76,6 @@ backend/
 │   │   ├── prisma.module.ts
 │   │   └── prisma.service.ts
 │   ├── generated/             # Generated Prisma client
-│   ├── types/                 # Shared type definitions
-│   │   └── global.type.ts     # Enums and types (Roles)
 │   ├── app.controller.ts
 │   ├── app.module.ts
 │   ├── app.service.ts
@@ -93,6 +97,42 @@ backend/
 - `updatedAt`: Last update timestamp
 
 ## Architecture & Code Quality
+
+### Centralized Constants & Configuration
+
+All application constants are centralized in `src/constants/` directory, providing a single source of truth for configuration across the entire application:
+
+**Constants Files:**
+- `roles.constants.ts` - Role definitions (STUDENT, INSTRUCTOR, ADMIN) with Enum, Type, and backwards-compatible object
+- `security.constants.ts` - JWT and bcrypt configuration (secret, sign options, salt rounds)
+- `app.constants.ts` - API metadata and Swagger settings (title, description, version, tags, bearer auth)
+- `throttler.constants.ts` - Rate limiting settings (TTL: 60s, Limit: 5 requests)
+- `validation.constants.ts` - ValidationPipe settings (whitelist, forbidNonWhitelisted, transform)
+
+**Usage Pattern:**
+```typescript
+// Import from centralized constants
+import { 
+  jwtConstants, 
+  bcryptConstants, 
+  throttlerConstants, 
+  validationConstants,
+  appConstants,
+  Roles 
+} from 'src/constants';
+
+// Used in modules
+JwtModule.register(jwtConstants);
+ThrottlerModule.forRoot({ throttlers: [throttlerConstants] });
+app.useGlobalPipes(new ValidationPipe(validationConstants));
+```
+
+**Benefits:**
+- ✅ Single source of truth - no duplicate definitions
+- ✅ Easy to maintain - change configuration in one place
+- ✅ Type-safe - fully typed with TypeScript
+- ✅ Environment-aware - uses `process.env` where needed
+- ✅ Organized by domain - constants grouped logically
 
 ### Centralized Swagger Configuration
 
@@ -257,6 +297,7 @@ pnpm test:cov
 - ✅ Swagger documentation with reusable decorators
 - ✅ Auth controller refactored for production-ready code
 - ✅ Global exception filter with centralized error handling
+- ✅ **Centralized Constants & Configuration** - All app config in `src/constants/`
 
 ### In Progress / Planned
 - 🔄 Course management endpoints
