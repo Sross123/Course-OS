@@ -1,35 +1,27 @@
 import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { appConstants } from 'src/constants';
 
-/**
- * Setup Swagger/OpenAPI documentation for the application
- * 
- * @param app - NestJS application instance
- */
 export function setupSwagger(app: INestApplication): void {
   const config = new DocumentBuilder()
-    .setTitle('Course-OS API')
-    .setDescription('API documentation for the Course-OS backend services.')
-    .setVersion('1.0')
-    .addTag('auth', 'Authentication and authorization endpoints')
+    .setTitle(appConstants.api.title)
+    .setDescription(appConstants.api.description)
+    .setVersion(appConstants.api.version)
+    .addTag(appConstants.swagger.tags[0].name, appConstants.swagger.tags[0].description)
     .addBearerAuth(
       {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        description: 'Enter JWT access token',
+        type: appConstants.swagger.bearerAuth.type as 'http',
+        scheme: appConstants.swagger.bearerAuth.scheme,
+        bearerFormat: appConstants.swagger.bearerAuth.bearerFormat,
+        description: appConstants.swagger.bearerAuth.description,
       },
       'JWT-auth',
     )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  
-  SwaggerModule.setup('api', app, document, {
-    swaggerOptions: {
-      persistAuthorization: true,
-      tagsSorter: 'alpha',
-      operationsSorter: 'alpha',
-    },
+
+  SwaggerModule.setup(appConstants.swagger.path, app, document, {
+    swaggerOptions: appConstants.swagger.options,
   });
 }
